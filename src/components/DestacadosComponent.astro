@@ -1,36 +1,46 @@
 ---
-const{titulo} = Astro.props;
+import { fetchFromAPI } from '../lib/conections.ts';
 
-import {fetchFromAPI} from '../lib/conections.ts';
+const { titulo } = Astro.props;
 
-const producto  = await fetchFromAPI('destactados');
+const productos = await fetchFromAPI('productos');
+
+const response = Array.isArray(productos)
+    ? productos.filter((item: any) => item.categoria === 'hardware')
+    : [];
 ---
-<section class="py-12">
-    <h2 class="text-3xl font-bold uppercase text-black mb-8 text-center">{titulo}</h2>
-    <div class="w-8xl mx-auto px-10 grid grid-cols-3 gap-6 pb-8">
-        {producto.map((item : any) => (
-                <div class="w-full border-5  border-gray-200">
-                    <a href="" class="flex-col h-full bg-white">
-                        <div class="h-75 w-full bg-gray-50 flex items-center justify-center p-4">
-                            <img
-                                    src={item.imagen_url}
-                                    alt={item.nombre}
-                                    class="h-full w-full object-contain"
-                            />
-                        </div>
-                        <div class=" bg-white-200 p-4 bg-gray-200">
-                        <span class="text-xs font-bold text-blue-600 uppercase">
+<section class="py-12 max-w-7xl mx-auto px-6">
+    <div class="flex justify-between items-end mb-8 border-b border-gray-200 pb-4">
+        <h2 class="text-3xl font-bold uppercase">{titulo}</h2>
+        <a href="/" class="text-blue-700 hover:text-blue-900 font-bold flex items-center gap-2 hover:underline">
+            Ver más ->
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {response.map((item: any) => (
+                <article class="group border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all bg-white flex flex-col">
+                    <a href={`/producto/${item.slug}`} class="flex-1 flex flex-col">
+                        <div class="relative h-56 p-4 flex justify-center items-center bg-gray-50">
+                        <span class="absolute top-2 right-2 bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded capitalize">
                             {item.categoria}
                         </span>
-                            <h3 class="mt-2 text-lg font-bold text-gray-900">
+                            <img
+                                    src={item.image.url}
+                                    alt={item.nombre}
+                                    class="h-full object-contain group-hover:scale-110 transition-transform duration-300"
+                            />
+                        </div>
+                        <div class="p-4 text-center">
+                            <h3 class="font-semibold text-gray-900 line-clamp-2 h-10 mb-2">
                                 {item.nombre}
                             </h3>
-                            <p class="mt-4 text-xl font-extrabold text-gray-900">
-                                {"$"+item.precio}
+                            <p class="text-2xl font-extrabold text-gray-900">
+                                $ {Number(item.precio).toLocaleString('es-CL')}
                             </p>
                         </div>
                     </a>
-                </div>
+                </article>
         ))}
     </div>
 </section>
