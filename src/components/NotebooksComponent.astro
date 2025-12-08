@@ -10,7 +10,7 @@ const { titulo, cantidad } = Astro.props;
 const todosLosProductos: any[] = await fetchFromAPI('productos') || [];
 
 // Filtramos por notebooks y cortamos la cantidad
-const hardwareFiltrado = todosLosProductos.filter((item: any) => item.categoria === 'perifericos');
+const hardwareFiltrado = todosLosProductos.filter((item: any) => item.categoria === 'notebook');
 const productos = hardwareFiltrado.slice(0, cantidad);
 ---
 

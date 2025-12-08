@@ -1,0 +1,74 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { PUBLIC_STRAPI_URL } from '../../lib/conections';
+
+export async function getStaticPaths() {
+    const response = await fetch(`${PUBLIC_STRAPI_URL}/posts?populate=*`);
+    const { data } = await response.json();
+    const noticias = data || [];
+
+    return noticias.map((item: any) => ({
+        params: { slug: item.slug },
+        props: { post: item },
+    }));
+}
+
+const { post } = Astro.props as any;
+const categoriaNombre = post.categoria?.nombre || 'Blog';
+---
+
+<Layout title={post.titulo}>
+    <article class="max-w-3xl mx-auto p-4">
+
+        {/* 1. NAVEGACIÓN Y CATEGORÍA */}
+        <div class="flex justify-between items-center mb-8 border-b pb-2">
+            <a href="/blog" class="hover:underline">
+                ← Volver
+            </a>
+            <span class="border px-2 py-1 uppercase text-sm">
+                {categoriaNombre}
+            </span>
+        </div>
+
+        {/* 2. ENCABEZADO (Header) */}
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold mb-4">
+                {post.titulo}
+            </h1>
+
+            {post.subtitulo && (
+                    <p class="text-xl text-gray-600">
+                        {post.subtitulo}
+                    </p>
+            )}
+        </header>
+
+        {/* 3. IMAGEN PRINCIPAL */}
+        <div class="w-full mb-8">
+            <img
+                    src={post.cover?.url || '/placeholder.png'}
+                    alt={post.titulo}
+                    class="w-full h-auto"
+            />
+        </div>
+
+        {/* 4. CONTENIDO DEL ARTÍCULO */}
+        <div>
+
+            {/* Resumen / Lead */}
+            <div class="border-l-4 border-gray-300 pl-4 mb-8 italic">
+                <p>
+                    {post.resumen}
+                </p>
+            </div>
+
+            {/* ---> CONTENIDO COMPLETO <--- */}
+            {/* IMPORTANTE: Mantener 'whitespace-pre-line' para los saltos de línea */}
+            <div class="whitespace-pre-line text-lg leading-relaxed">
+                {post.contenido}
+            </div>
+
+        </div>
+
+    </article>
+</Layout>

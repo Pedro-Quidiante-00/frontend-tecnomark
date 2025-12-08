@@ -1,80 +1,93 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-// Importación limpia (sin .ts)
 import { fetchFromAPI } from '../../lib/conections';
 
-// 1. OBTENER RUTAS
 export async function getStaticPaths() {
-    const data = await fetchFromAPI('productos');
-    // Mapeo simple y seguro
-    return Array.isArray(data) ? data.map((item: any) => ({
+    const productos = await fetchFromAPI('productos') || [];
+    return productos.map((item: any) => ({
         params: { slug: item.slug },
         props: { prod: item },
-    })) : [];
+    }));
 }
-// 2. RECIBIR DATOS
-const { prod } = Astro.props;
+
+const { prod } = Astro.props as any;
 const detalles = prod.detalles || {};
 ---
+
 <Layout title={prod.nombre}>
-    <div class="max-w-5xl mx-auto p-6 min-h-screen flex flex-col justify-center">
-        {/* Botón Volver Simple */}
-        <a href="/" class="text-blue-600 hover:underline mb-6 inline-block w-fit">
+    <div class="max-w-5xl mx-auto p-4">
+
+        {/* Link de volver simple */}
+        <a href="/" class="block mb-6 hover:underline">
             ← Volver al inicio
         </a>
 
-        {/* Contenedor Principal (Grid responsive) */}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white border border-gray-200 p-8 rounded-lg shadow-sm">
+        {/* ESTRUCTURA GRID: 2 Columnas (Imagen | Info) */}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
             {/* COLUMNA 1: IMAGEN */}
-            <div class="flex items-center justify-center bg-gray-50 rounded p-4 h-96">
-                {/* Lógica directa: Si hay imagen en Cloudinary, la usa. Si no, placeholder */}
+            <div class="border border-gray-300 p-2">
                 <img
-                        src={prod.image?.url || '/placeholder.png'}
+                        src={prod.image?.url}
                         alt={prod.nombre}
-                        class="h-full w-full object-contain mix-blend-multiply"
+                        class="w-full h-auto"
                 />
             </div>
 
             {/* COLUMNA 2: INFORMACIÓN */}
-            <div class="flex flex-col justify-center">
+            <div>
 
-                {/* Categoría */}
-                <span class="text-gray-400 text-sm uppercase tracking-widest mb-2">
+                <span class="block text-sm text-gray-500 mb-2">
                     {prod.categoria || 'Producto'}
                 </span>
 
-                {/* Título */}
-                <h1 class="text-3xl font-bold text-gray-900 mb-4">
+                <h1 class="text-3xl mb-4">
                     {prod.nombre}
                 </h1>
 
-                {/* Precio */}
-                <p class="text-3xl font-bold text-blue-600 mb-6">
+                <p class="text-2xl mb-6">
                     $ {Number(prod.precio).toLocaleString('es-CL')}
                 </p>
-                {/* Especificaciones (Muestra lo que encuentre, sin importar la categoría) */}
-                <div class="bg-gray-50 p-4 rounded text-sm">
-                    <h3 class="font-bold mb-3 uppercase text-gray-500 text-xs">Detalles Técnicos</h3>
-                    <ul class="space-y-2">
+
+                {/* TABLA DE DETALLES */}
+                <div class="border-t border-gray-300 pt-4">
+                    <h3 class="font-bold mb-4">Detalles Técnicos</h3>
+
+                    <ul class="w-full">
                         {detalles.pantalla && (
-                                <li class="flex justify-between border-b pb-1"><span>Pantalla:</span> <span class="font-medium">{detalles.pantalla}</span></li>
+                                <li class="flex justify-between border-b border-gray-200 py-2">
+                                    <span>Pantalla:</span> <span>{detalles.pantalla}</span>
+                                </li>
                         )}
                         {detalles.procesador && (
-                                <li class="flex justify-between border-b pb-1"><span>Procesador:</span> <span class="font-medium">{detalles.procesador}</span></li>
+                                <li class="flex justify-between border-b border-gray-200 py-2">
+                                    <span>Procesador:</span> <span>{detalles.procesador}</span>
+                                </li>
                         )}
                         {detalles.ram && (
-                                <li class="flex justify-between border-b pb-1"><span>RAM:</span> <span class="font-medium">{detalles.ram}</span></li>
+                                <li class="flex justify-between border-b border-gray-200 py-2">
+                                    <span>RAM:</span> <span>{detalles.ram}</span>
+                                </li>
                         )}
                         {detalles.memoria_interna && (
-                                <li class="flex justify-between border-b pb-1"><span>Almacenamiento:</span> <span class="font-medium">{detalles.memoria_interna}</span></li>
+                                <li class="flex justify-between border-b border-gray-200 py-2">
+                                    <span>Almacenamiento:</span> <span>{detalles.memoria_interna}</span>
+                                </li>
                         )}
                         {detalles.bateria && (
-                                <li class="flex justify-between border-b pb-1"><span>Batería:</span> <span class="font-medium">{detalles.bateria}</span></li>
+                                <li class="flex justify-between border-b border-gray-200 py-2">
+                                    <span>Batería:</span> <span>{detalles.bateria}</span>
+                                </li>
                         )}
-                        {/* Combina GPU y Tarjetas de video en una sola lógica */}
                         {(detalles.gpu || detalles.tarjetas_de_video) && (
-                                <li class="flex justify-between border-b pb-1"><span>Gráfica:</span> <span class="font-medium">{detalles.gpu || detalles.tarjetas_de_video}</span></li>
+                                <li class="flex justify-between border-b border-gray-200 py-2">
+                                    <span>Gráfica:</span> <span>{detalles.gpu || detalles.tarjetas_de_video}</span>
+                                </li>
+                        )}
+                        {detalles.sistema_operativo && (
+                                <li class="flex justify-between border-b border-gray-200 py-2">
+                                    <span>S. Operativo:</span> <span>{detalles.sistema_operativo}</span>
+                                </li>
                         )}
                     </ul>
                 </div>

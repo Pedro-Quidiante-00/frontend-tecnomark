@@ -1,40 +1,36 @@
 ---
 import { PUBLIC_STRAPI_URL } from '../lib/conections';
 
-const { titulo } = Astro.props;
-
-// 1. PETICIÓN (Usamos fetch directo para asegurar que Strapi traiga las imágenes)
+// NOTA: Mantuve la URL tal cual me la pasaste (ojo con 'destactados' vs 'destacados')
 const response = await fetch(`${PUBLIC_STRAPI_URL}/destactados?populate[destacados][populate]=image`);
-const json = await response.json();
+const { data } = await response.json();
 
-// 2. EXTRACCIÓN SIMPLE
-const data = Array.isArray(json.data) ? json.data[0] : json.data;
-// Sacamos la lista de productos que está dentro
-const productos = data?.destacados || [];
-const tituloMostrar = titulo || data?.titulo || "Productos Destacados";
+const info = data?.[0];
+const productos = info.destacados || [];
 ---
 
-<section class="py-12 px-6 max-w-7xl mx-auto">
-    <h2 class="text-3xl font-bold mb-8 uppercase border-b pb-4">
-        {tituloMostrar}
+<section class="w-full">
+    <h2 class="text-2xl mb-4">
+        {info.titulo || "Productos Destacados"}
     </h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         {productos.map((item: any) => (
-                <article class="border rounded-lg bg-white overflow-hidden hover:shadow-lg transition-shadow">
-                    <a href={`/producto/${item.slug}`}>
+            /* CARD: Solo borde para delimitar */
+                <article class="border border-gray-300">
+                    <a href={`/producto/${item.slug}`} class="block">
 
-                        <div class="h-56 p-4 flex justify-center items-center bg-gray-50">
+                        <div class="p-2">
                             <img
-                                    src={item.image?.url}
+                                    src={item.image?.url || '/placeholder.png'}
                                     alt={item.nombre}
-                                    class="h-full w-full object-contain mix-blend-multiply"
+                                    class="w-full h-auto"
                             />
                         </div>
 
-                        <div class="p-4 text-center border-t border-gray-100">
-                            <h3 class="font-semibold text-gray-900 mb-2 truncate">{item.nombre}</h3>
-                            <p class="text-xl font-bold text-blue-600">
+                        <div class="p-2">
+                            <h3>{item.nombre}</h3>
+                            <p>
                                 $ {Number(item.precio).toLocaleString('es-CL')}
                             </p>
                         </div>
