@@ -1,110 +1,84 @@
 ---
-// 1. IMPORTACIONES
 import Layout from '../../layouts/Layout.astro';
-import { fetchFromAPI } from '../../lib/conections.ts';
+// Importación limpia (sin .ts)
+import { fetchFromAPI } from '../../lib/conections';
 
-// 2. GET STATIC PATHS
+// 1. OBTENER RUTAS
 export async function getStaticPaths() {
-    const rawData = await fetchFromAPI('productos');
-    const data = Array.isArray(rawData) ? rawData : (rawData.data || []);
-
-    return data.map((prod: any) => ({
-        params: {
-            slug: prod.slug
-        },
-        props: {
-            prod: prod
-        },
-    }));
+    const data = await fetchFromAPI('productos');
+    // Mapeo simple y seguro
+    return Array.isArray(data) ? data.map((item: any) => ({
+        params: { slug: item.slug },
+        props: { prod: item },
+    })) : [];
 }
-
-// 3. RECUPERAMOS DATOS (usamos 'any' para evitar errores)
-const { prod } = Astro.props as any;
-
-// --- ZONA DE LÓGICA DE DATOS ---
-
-const precioFormateado = Number(prod.precio).toLocaleString('es-CL');
-const imagenUrl = prod.image?.url || prod.imagen_url || '/placeholder.png';
+// 2. RECIBIR DATOS
+const { prod } = Astro.props;
 const detalles = prod.detalles || {};
-
-// ** SOLUCIÓN A TU PROBLEMA DE DESCRIPCIÓN **
-// Si 'prod.descripcion' no existe, creamos una frase automática con los detalles técnicos.
-const descripcionTexto = prod.descripcion
-    ? prod.descripcion
-    : `Descubre el ${prod.nombre}, equipado con una pantalla ${detalles.pantalla || 'de alta resolución'} y potenciado por el procesador ${detalles.procesador || 'de alto rendimiento'}. Cuenta con ${detalles.ram} de RAM y una excelente cámara principal de ${detalles.camara_principal || 'alta calidad'}.`;
-
 ---
-
 <Layout title={prod.nombre}>
+    <div class="max-w-5xl mx-auto p-6 min-h-screen flex flex-col justify-center">
+        {/* Botón Volver Simple */}
+        <a href="/" class="text-blue-600 hover:underline mb-6 inline-block w-fit">
+            ← Volver al inicio
+        </a>
 
-    {/* AGREGADO: flex items-center justify-center para centrado total */}
-    <div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        {/* Contenedor Principal (Grid responsive) */}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white border border-gray-200 p-8 rounded-lg shadow-sm">
 
-        {/* Tarjeta Principal */}
-        <div class="max-w-7xl w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-            <div class="grid grid-cols-1 lg:grid-cols-2">
+            {/* COLUMNA 1: IMAGEN */}
+            <div class="flex items-center justify-center bg-gray-50 rounded p-4 h-96">
+                {/* Lógica directa: Si hay imagen en Cloudinary, la usa. Si no, placeholder */}
+                <img
+                        src={prod.image?.url || '/placeholder.png'}
+                        alt={prod.nombre}
+                        class="h-full w-full object-contain mix-blend-multiply"
+                />
+            </div>
 
-                {/* Columna Imagen */}
-                <div class="p-8 lg:p-12 bg-gray-50 flex items-center justify-center relative">
-                    <img
-                            src={imagenUrl}
-                            alt={prod.nombre}
-                            class="w-full h-auto max-h-[500px] object-contain mix-blend-multiply hover:scale-105 transition-transform duration-500"
-                    />
+            {/* COLUMNA 2: INFORMACIÓN */}
+            <div class="flex flex-col justify-center">
+
+                {/* Categoría */}
+                <span class="text-gray-400 text-sm uppercase tracking-widest mb-2">
+                    {prod.categoria || 'Producto'}
+                </span>
+
+                {/* Título */}
+                <h1 class="text-3xl font-bold text-gray-900 mb-4">
+                    {prod.nombre}
+                </h1>
+
+                {/* Precio */}
+                <p class="text-3xl font-bold text-blue-600 mb-6">
+                    $ {Number(prod.precio).toLocaleString('es-CL')}
+                </p>
+                {/* Especificaciones (Muestra lo que encuentre, sin importar la categoría) */}
+                <div class="bg-gray-50 p-4 rounded text-sm">
+                    <h3 class="font-bold mb-3 uppercase text-gray-500 text-xs">Detalles Técnicos</h3>
+                    <ul class="space-y-2">
+                        {detalles.pantalla && (
+                                <li class="flex justify-between border-b pb-1"><span>Pantalla:</span> <span class="font-medium">{detalles.pantalla}</span></li>
+                        )}
+                        {detalles.procesador && (
+                                <li class="flex justify-between border-b pb-1"><span>Procesador:</span> <span class="font-medium">{detalles.procesador}</span></li>
+                        )}
+                        {detalles.ram && (
+                                <li class="flex justify-between border-b pb-1"><span>RAM:</span> <span class="font-medium">{detalles.ram}</span></li>
+                        )}
+                        {detalles.memoria_interna && (
+                                <li class="flex justify-between border-b pb-1"><span>Almacenamiento:</span> <span class="font-medium">{detalles.memoria_interna}</span></li>
+                        )}
+                        {detalles.bateria && (
+                                <li class="flex justify-between border-b pb-1"><span>Batería:</span> <span class="font-medium">{detalles.bateria}</span></li>
+                        )}
+                        {/* Combina GPU y Tarjetas de video en una sola lógica */}
+                        {(detalles.gpu || detalles.tarjetas_de_video) && (
+                                <li class="flex justify-between border-b pb-1"><span>Gráfica:</span> <span class="font-medium">{detalles.gpu || detalles.tarjetas_de_video}</span></li>
+                        )}
+                    </ul>
                 </div>
 
-                {/* Columna Info */}
-                <div class="p-8 lg:p-12 flex flex-col justify-center bg-white">
-
-                    <span class="inline-block bg-blue-100 text-blue-800 text-sm font-bold px-3 py-1 rounded-full mb-4 w-fit uppercase tracking-wider">
-                        {prod.marca || prod.tipo || 'Smartphone'}
-                    </span>
-
-                    <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight mb-4">
-                        {prod.nombre}
-                    </h1>
-
-                    <div class="mb-6 flex items-baseline">
-                        <span class="text-4xl font-bold text-blue-600">$ {precioFormateado}</span>
-                        <span class="text-gray-400 text-lg ml-2 font-medium">CLP</span>
-                    </div>
-
-                    <p class="text-gray-600 text-lg leading-relaxed mb-8 border-b border-gray-100 pb-8">
-                        {descripcionTexto}
-                    </p>
-
-                    {/* Especificaciones */}
-                    <div>
-                        <h3 class="text-sm font-bold text-gray-900 uppercase tracking-widest mb-4">Especificaciones Clave</h3>
-                        <div class="space-y-3">
-                            {detalles.pantalla && (
-                                    <div class="flex justify-between border-b border-gray-50 pb-2">
-                                        <span class="text-gray-500">Pantalla</span>
-                                        <span class="text-gray-900 font-medium text-right ml-4 text-xs sm:text-sm">{detalles.pantalla}</span>
-                                    </div>
-                            )}
-                            {detalles.ram && (
-                                    <div class="flex justify-between border-b border-gray-50 pb-2">
-                                        <span class="text-gray-500">RAM</span>
-                                        <span class="text-gray-900 font-medium text-right ml-4">{detalles.ram}</span>
-                                    </div>
-                            )}
-                            {detalles.memoria_interna && (
-                                    <div class="flex justify-between border-b border-gray-50 pb-2">
-                                        <span class="text-gray-500">Almacenamiento</span>
-                                        <span class="text-gray-900 font-medium text-right ml-4">{detalles.memoria_interna}</span>
-                                    </div>
-                            )}
-                            {detalles.procesador && (
-                                    <div class="flex justify-between border-b border-gray-50 pb-2">
-                                        <span class="text-gray-500">Procesador</span>
-                                        <span class="text-gray-900 font-medium text-right ml-4 text-xs sm:text-sm">{detalles.procesador}</span>
-                                    </div>
-                            )}
-                        </div>
-                    </div>
-
-                </div>
             </div>
         </div>
     </div>

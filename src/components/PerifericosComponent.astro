@@ -10,7 +10,7 @@ const { titulo, cantidad } = Astro.props;
 const response = await fetchFromAPI('productos');
 const data = Array.isArray(response) ? response : [];
 
-const todosLosProductos = data.filter((item: any) => item.categoria === 'hardware');
+const todosLosProductos = data.filter((item: any) => item.categoria === 'perifericos');
 const productos = todosLosProductos.slice(0, cantidad);
 ---
 

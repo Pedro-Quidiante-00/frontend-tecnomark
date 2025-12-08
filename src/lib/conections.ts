@@ -1,7 +1,7 @@
 const strapiUrl = import.meta.env.PUBLIC_STRAPI_URL || 'https://astro-backend-yryd.onrender.com/api';
 
 export const PUBLIC_STRAPI_URL = strapiUrl;
-
+export const STRAPI_BASE_URL = strapiUrl.replace('/api', '');
 export const fetchFromAPI = async (slug: string) => {
     try {
         const response = await fetch(`${PUBLIC_STRAPI_URL}/${slug}?populate=*`);
