@@ -2,36 +2,29 @@
 import { fetchFromAPI } from "../lib/conections";
 
 interface Link {
+    id: number;
     label: string;
     url: string;
 }
 
 interface Columna {
+    id: number;
     titulo: string;
     links: Link[];
 }
 
-interface Logo {
-    url: string;
-}
+const footer = await fetchFromAPI("footer?populate[columnas][populate]=*#");
+const logo = await fetchFromAPI("logo");
 
-interface FooterData {
-    marca: string;
-    eslogan: string;
-    logo: Logo;
-    columnas: Columna[];
-}
+const { marca, eslogan, columnas } = footer;
 
-const footerData: FooterData = await fetchFromAPI('footer') || {};
-const { marca, eslogan, logo, columnas } = footerData;
 ---
 <footer class="bg-black text-white py-10">
     <div class="container mx-auto z-50">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-            {/* 1. LOGO Y MARCA */}
             <div>
                         <img
-                                src={logo.url}
+                                src={logo.imagen.url}
                                 alt="Logo"
                                 class="w-32 py-2 opacity-65 object-contain"
                         />
@@ -39,15 +32,16 @@ const { marca, eslogan, logo, columnas } = footerData;
                 <p class="mt-2 text-sm text-gray-300">{eslogan}</p>
             </div>
 
-
-            {columnas?.map((col) => (
+            {/* Mapeo de columnas */}
+            {columnas?.map((col: Columna) => (
                     <div>
                         <h2 class="font-bold mb-3 text-2xl">
                             {col.titulo}
                         </h2>
 
                         <ul class="space-y-2">
-                            {col.links?.map((item) => (
+                            {/* AQUI ESTABA EL FALLO: Ahora que la URL es correcta, 'links' existirá */}
+                            {col.links?.map((item: Link) => (
                                     <li class="hover:underline hover:text-gray-300 cursor-pointer">
                                         <a href={item.url}>{item.label}</a>
                                     </li>
@@ -55,7 +49,6 @@ const { marca, eslogan, logo, columnas } = footerData;
                         </ul>
                     </div>
             ))}
-
         </div>
     </div>
 </footer>

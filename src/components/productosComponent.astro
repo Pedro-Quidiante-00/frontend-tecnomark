@@ -8,10 +8,9 @@ interface Props {
 
 }
 const { titulo, cantidad, categoria } = Astro.props;
+const todosLosProductos = await fetchFromAPI('productos');
 
-const todosLosProductos: any[] = await fetchFromAPI('productos') || [];
 const productosFiltrados = todosLosProductos.filter((item: any) => item.categoria === categoria);
-
 const productos = productosFiltrados.slice(0, cantidad);
 ---
 

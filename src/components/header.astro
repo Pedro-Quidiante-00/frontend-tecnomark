@@ -1,30 +1,28 @@
 ---
 import {fetchFromAPI} from "../lib/conections.ts";
 
-const menu = await fetchFromAPI('menunavs');
-const logo = await fetchFromAPI('logo');
+interface ItemsMenu {
+    label: string;
+    url: string;
+}
+const logo = await fetchFromAPI('logo')
+const menu: ItemsMenu[] = await fetchFromAPI("menunavs")
 ---
-
-<header class="bg-gray-950/50 flex w-full fixed text-white z-50 backdrop-blur-2xl">
-    <div class="w-full flex items-center p-4 justify-between">
-
-        {logo?.image?.url && (
-                <a href="/">
-                    <img
-                            src={Logo.image.url}
-                            alt={logo.label || "Logo"}
-                            class="h-10 w-auto"
-                    />
+<header class=" bg-gray-950/50 flex w-full fixed text-white z-50 backdrop-blur-2xl">
+    <div class="w-full flex justify-center items-center p-4 ">
+        <a href="/">
+            <img
+                    src={logo.imagen.url}
+                    alt="Logo"
+                    class="w-40 px-10 mx-10"/>
+        </a>
+        <nav class="hidden md:flex gap-x-13">{menu.slice(0, 7).map(item => (
+                <a
+                        href={item.url}
+                        class="hover:text-gray-300 transition-colors text-lg font-bold">
+                    {item.label}
                 </a>
-        )}
-
-        <nav class="hidden md:flex gap-x-6">
-            {menu.slice(0).map((item: any) => (
-                    <a href={item.url} class="hover:text-gray-300 transition-colors text-lg font-bold">
-                        {item.label}
-                    </a>
-            ))}
+        ))}
         </nav>
-
     </div>
 </header>
