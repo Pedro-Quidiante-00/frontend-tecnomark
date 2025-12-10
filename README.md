@@ -1,46 +1,125 @@
-# Astro Starter Kit: Basics
 
-```sh
-npm create astro@latest -- --template basics
+-----
+
+# Instalación de Astro
+
+### 1\. Creación del Proyecto
+
+Abre tu terminal y ejecuta el siguiente comando. Cuando te pregunte el nombre de la carpeta, escribe `frontend`.
+
+```
+npm create astro@latest
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+**Configuración durante el asistente:**
 
-## 🚀 Project Structure
+* **Where should we create your new project?** Escribe: `frontend`
+* **How would you like to start?** Selecciona: `A basic, helpful starter project (recommended)`
+* **Install dependencies?** Selecciona: `Yes`
+* **Do you plan to write TypeScript?** Selecciona: `Yes`
+* **Initialize a new git repository?** Selecciona: `Yes`
 
-Inside of your Astro project, you'll see the following folders and files:
+### 2\. Acceso al Proyecto
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+Una vez termine la instalación, entra en la carpeta creada:
+
+```
+cd frontend
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+### 3\. Limpieza Manual (Paso Clave)
 
-## 🧞 Commands
+Vamos a eliminar la "información por defecto" para dejar el proyecto limpio manteniendo la estructura de carpetas.
 
-All commands are run from the root of the project, from a terminal:
+1.  Ve a la carpeta `src/components/` y borra el archivo `welcome.astro`.
+2.  Abre el archivo `src/pages/index.astro`.
+3.  Borra todo el contenido actual y reemplázalo por este código base:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+<!-- end list -->
 
-## 👀 Want to learn more?
+```
+---
+import Layout from '../layouts/Layout.astro';
+---
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+<Layout title="Mi Proyecto Astro">
+    <main>
+       <h1>Hola Mundo</h1>
+    </main>
+</Layout>
+```
+
+4.  También limpiar los estilos globales por defecto, abre `src/layouts/Layout.astro` y borra todo el CSS que se encuentra dentro de las etiquetas `<style is:global>`.
+
+### 4\. Primera Ejecución
+
+Verifica que la limpieza funcionó correctamente:
+
+```
+npm run dev
+```
+
+Deberías ver una página en blanco que solo dice "Hola Mundo".
+
+-----
+
+# Instalación de Tailwind CSS
+
+### 1\. ⚙️ El Comando de Instalación
+
+Con el servidor detenido (Ctrl + C), ejecuta el comando oficial de integración. Este comando detecta la versión más reciente compatible (incluyendo v4 si está disponible):
+
+```
+npx astro add tailwind
+```
+
+El asistente te pedirá confirmación para instalar las dependencias. Para esta instalación solo responde **Yes** a todo.
+
+### 2\. Disponibilidad Global
+
+Una vez finalizado, Tailwind CSS estará inyectado automáticamente en tu proyecto.
+
+Aunque generalmente no necesitas importar nada, **asegúrate de importar tu hoja de estilos en el Layout** para que se apliquen correctamente los estilos globales:
+
+Abre `src/layouts/Layout.astro` y agrega la importación:
+
+```
+---
+import '../styles/global.css';  <-----
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>{title}</title>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+```
+
+### 3\. Verificación
+
+Para confirmar que Tailwind funciona, ve a tu `src/pages/index.astro` y pega este código de prueba:
+
+```
+<Layout title="Mi Proyecto Astro">
+    <main class="flex items-center justify-center h-screen bg-gray-900">
+        <header class="bg-gray-800 text-white p-6 shadow-2xl rounded-lg">
+            <h1 class="text-3xl font-bold text-blue-400">
+                Mi Sitio Astro con Tailwind
+            </h1>
+        </header>
+    </main>
+</Layout>
+```
+Si ves el fondo oscuro, el texto blanco y el título en azul con negrita, todo está listo.
