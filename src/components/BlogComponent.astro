@@ -4,7 +4,7 @@ import {PUBLIC_STRAPI_URL} from '../lib/conections';
 const response = await fetch(`${PUBLIC_STRAPI_URL}/categoria-noticias?populate[posts][populate]=cover`);
 const {data} = await response.json();
 
-const categorias = data || [];
+const categorias = data;
 ---
 <section class="max-w-7xl mx-auto px-6 py-12">
     <div class="flex flex-col gap-16">
@@ -16,7 +16,7 @@ const categorias = data || [];
                         </h2>
                     </div>
                     <div class="flex flex-wrap justify-center gap-6">
-                        {(item.posts || []).map((post: any) => (
+                        {(item.posts).map((post: any) => (
                                 <article class=" flex flex-col w-full sm:w-80 bg-white border border-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                                     <a href={`/blog/${post.slug}`}>
 
@@ -43,7 +43,6 @@ const categorias = data || [];
                                 </article>
                         ))}
                     </div>
-
                 </div>
         ))}
     </div>
