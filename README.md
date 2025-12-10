@@ -6,6 +6,15 @@ Este proyecto integra contenido generado por IA **exclusivamente** en:
 * La implementacion del renderizado condicional para mostrar y no mostrar caracteristicas del producto dependiendo cual sea
 * La implementación del formato de precios para su correcta visualización en moneda local (CLP).
 -----
+### Tabla de Integrantes, Roles y Funciones
+
+| Integrante | Rol en el Proyecto           | Función Principal | Lo que hizo |
+| :--- |:-----------------------------| :--- | :--- |
+| **Pedro Quidiante** | Líder de Proyecto / Frontend | **Lógica y Funcionalidad** | Programó la conexión de datos, las rutas y la navegación del sitio. |
+| **Juan Sánchez** | Configuración y Diseño       | **Diseño y Estructura** | Preparó el entorno visual (Tailwind) y la adaptación a celulares. |
+| **Vicente Arriagada** | Líder Backend                | **Sistema Backend** | Configuró el panel de administración (Strapi) y los tipos de datos. |
+| **Richard Ortega** | Gestor de Contenido          | **Gestión de Contenido** | Se encargó de redactor, organizar y subir toda la información al sistema. |
+-----
 # Instalación de Astro
 
 ### 1\. Creación del Proyecto
