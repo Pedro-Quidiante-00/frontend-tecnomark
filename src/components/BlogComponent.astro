@@ -2,9 +2,9 @@
 import {PUBLIC_STRAPI_URL} from '../lib/conections';
 
 const response = await fetch(`${PUBLIC_STRAPI_URL}/categoria-noticias?populate[posts][populate]=cover`);
-const {data} = await response.json();
+const {json} = await response.json();
 
-const categorias = data || [];
+const categorias = json || [];
 ---
 <section class="max-w-7xl mx-auto px-6 py-12">
     <div class="flex flex-col gap-16">

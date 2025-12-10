@@ -2,7 +2,7 @@
 import {PUBLIC_STRAPI_URL} from '../lib/conections';
 
 const response = await fetch(`${PUBLIC_STRAPI_URL}/destactados?populate[destacados][populate]=image`);
-const { data } = await response.json();
+const {data} = await response.json();
 
 const info = data?.[0];
 const productos = info.destacados || [];
