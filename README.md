@@ -3,6 +3,7 @@
 Este proyecto integra contenido generado por IA **exclusivamente** en:
 
 * La identificación y localización precisa de recursos multimedia en Strapi.
+* La implementacion del renderizado condicional para mostrar y no mostrar caracteristicas del producto dependiendo cual sea
 * La implementación del formato de precios para su correcta visualización en moneda local (CLP).
 -----
 # Instalación de Astro
